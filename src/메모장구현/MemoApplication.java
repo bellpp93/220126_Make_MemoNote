@@ -92,6 +92,7 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 	}
 	
 	public void read(String readfile) throws IOException {  // throws는 호출한 쪽으로 예외를 던져주겠다. IOException는 입출력예외처리.
+		// 파일 입출력 중 열기 시 고속으로 읽게 하기 위해서 => BufferedReader 사용
 		BufferedReader read = new BufferedReader(new FileReader(readfile));
 		area.setText("");
 		String line = read.readLine();
@@ -104,6 +105,7 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 	}
 	
 	public void save(String savefile) throws IOException {  // throws는 호출한 쪽으로 예외를 던져주겠다. IOException는 입출력예외처리.
+		// 파일 입출력 중 저장 시 고속으로 저장 시키기 위해서 => BufferedWriter 사용
 		BufferedWriter save = new BufferedWriter(new FileWriter(savefile));
 		String line = area.getText();
 		save.write(line);
