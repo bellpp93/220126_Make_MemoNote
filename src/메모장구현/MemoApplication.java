@@ -82,7 +82,7 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 	} // end actionPerformed()
 	
 	public String readName() {
-		readOpen = new FileDialog(main_fr, "문서저장", FileDialog.LOAD);
+		readOpen = new FileDialog(main_fr, "문서열기", FileDialog.LOAD);
 		readOpen.setVisible(true);
 		String fileDir = readOpen.getDirectory();
 		String fileName = readOpen.getFile();
