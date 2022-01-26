@@ -3,7 +3,13 @@ package 메모장구현;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
+import javax.imageio.IIOException;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -54,12 +60,55 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		String itemPressed = e.getActionCommand();  //"열기" or "저장"을 itemPressed가 가져옴.
 		
 		if(itemPressed.equals("저장")) {
-			String name = saveName();  //사용자 정의 메소드 호출
-		}
-		if(itemPressed.equals("열기")) {
+			String name = readName();  //사용자 정의 메소드 호출
 			
+			//파일에 저장 시 반드시 '예외처리' 해줘야 한다.
+			try {
+				save(name);  //사용자 정의 메소드 호출
+			} catch (Exception ex) {
+				System.out.println(ex);
+			}
 		}
-	}  //end actionPerformed()
+		if (itemPressed.equals("열기")) {
+			String name = readName(); // 사용자 정의 메소드 호출
+
+			// 파일에 저장 시 반드시 '예외처리' 해줘야 한다.
+			try {
+				read(name); // 사용자 정의 메소드 호출
+			} catch (Exception ex) {
+				System.out.println(ex);
+			}
+		}
+	} // end actionPerformed()
+	
+	public String readName() {
+		readOpen = new FileDialog(main_fr, "문서저장", FileDialog.LOAD);
+		readOpen.setVisible(true);
+		String fileDir = readOpen.getDirectory();
+		String fileName = readOpen.getFile();
+		String readfilename;
+		readfilename = fileDir + "//" + fileName;  // /특수문자는 앞에 /하나 더 붙여줘야함.
+		return readfilename;
+	}
+	
+	public void read(String readfile) throws IOException {  // throws는 호출한 쪽으로 예외를 던져주겠다. IOException는 입출력예외처리.
+		BufferedReader read = new BufferedReader(new FileReader(readfile));
+		area.setText("");
+		String line = read.readLine();
+		
+		while(line != null) {
+			area.append(line + "\n");
+			line = read.readLine();
+		}
+		read.close();  // 자원 해제
+	}
+	
+	public void save(String savefile) throws IOException {  // throws는 호출한 쪽으로 예외를 던져주겠다. IOException는 입출력예외처리.
+		BufferedWriter save = new BufferedWriter(new FileWriter(savefile));
+		String line = area.getText();
+		save.write(line);
+		save.close(); // 자원 해제
+	}
 	
 	//FileDialog는 메모장에서 저장을 눌렀을때 나오는 창
 	public String saveName() {
@@ -69,7 +118,7 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		String fileName = saveOpen.getFile();
 		String savefilename;
 		savefilename = fileDir + "//" + fileName + ".txt";  // /특수문자는 앞에 /하나 더 붙여줘야함.
-		return savefilename;  // savefilename은 라인 57에 name을 가리킴.
+		return savefilename;  // savefilename은 라인 63에 있는 name에 할당한다.
 	}
 	
 	public static void main(String[] args) {
