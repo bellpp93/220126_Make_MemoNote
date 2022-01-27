@@ -9,19 +9,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.imageio.IIOException;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
+import javax.swing.JFrame;  // 최상위 컨테이너
+import javax.swing.JMenu;  // 컴퍼넌트↓
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 
 /*
  * 자바는 '하나의 클래스'만 상속 받을 수 있다. ※ 다중 상속 허용 안함!!
- * 자바에서 인터페이스는 하나가 아니라 '여러개'를 자식에게 구현 시킬 수 있다.
+ * 자바에서 인터페이스는 하나가 아니라 '여러개'를 자식에게 구현 시킬 수 있다. 여러개를 구현하고자 할때는 ,찍고 이어서 작성하면 됨.
  */
 
-public class MemoApplication extends JFrame implements ActionListener {  //ActionListener는 이벤트 핸들러
+public class MemoApplication extends JFrame implements ActionListener {  //ActionListener는 인터페이스이자 이벤트 핸들러라고 함.
 	
 	//준비 단계
 	JFrame main_fr = new JFrame("메모장 만들기");
@@ -31,7 +30,12 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 	
 	//생성자
 	public MemoApplication() {
-		//윈도우 실행창 화면 꾸미기
+		/*
+		 * 생성자에서 코딩할 내용
+		 * 객체 생성, 이벤트를 발생시키는 객체와 이벤트 핸들러 리스너 객체를 연결,
+		 * 객체 붙이기, 사이즈 결정, 실행창 닫기
+		 */
+		//윈도우 실행창 화면 꾸미기 => 화면 구성
 		JMenuBar main_br = new JMenuBar();
 		JMenu file = new JMenu("파일");
 		JMenuItem file_load = new JMenuItem("열기");
@@ -39,8 +43,9 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		area = new JTextArea();
 		
 		// ※ 열기, 저장 이라는 JmenuItem 객체를 클릭하면 => '이벤트가 발생했다' 의미
-		// file_load가 가리키는 객체와 this는 '이벤트 헨들러 리스너 객체를 연결시켜놓겠다' 라는 의미
-		file_load.addActionListener(this);  //implements ActionListener를 미리 구현 시켰을 경우 this사용.
+		// 아래 file_load가 가리키는 객체와 this는 '이벤트 헨들러 리스너 객체를 연결시켜놓겠다' 라는 의미
+		// 아래 'add'는 연결의 의미
+		file_load.addActionListener(this);  //미리 implements ActionListener를 구현 시켰을 경우 this사용 => 아니면 new 인터페이스 이벤트핸들러
 		file_save.addActionListener(this);  //사용자가 클릭할때까지 기다리고있다 => 클릭하면 actionPerformed호출 => e가 받는다.
 		
 		//컴퍼넌트 붙이기
@@ -50,21 +55,21 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		main_fr.add(area);
 		
 		main_fr.setBounds(300, 300, 500, 400);
-		main_fr.setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //실행 창 닫기
+		main_fr.setVisible(true);  //실행 창 보여주기
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //실행 창 닫기 및 프로그램 종료
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {  //JmanuItem은 ActionEvent를 가지고있다.
-		//인터페이스 오버라이드 하고 나서부터는 개발자가 채워넣기(개발자의 몫)
+		//Override하고나서 여기부터는 개발자의 몫
 		String itemPressed = e.getActionCommand();  //"열기" or "저장"을 itemPressed가 가져옴.
 		
-		if(itemPressed.equals("저장")) {
-			String name = readName();  //사용자 정의 메소드 호출
-			
-			//파일에 저장 시 반드시 '예외처리' 해줘야 한다.
+		if (itemPressed.equals("저장")) {
+			String name = readName(); // 사용자 정의 메소드 호출
+
+			// 파일에 저장 시 반드시 '예외처리' 해줘야 한다.
 			try {
-				save(name);  //사용자 정의 메소드 호출
+				save(name); // 사용자 정의 메소드 호출
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}
@@ -72,7 +77,6 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		if (itemPressed.equals("열기")) {
 			String name = readName(); // 사용자 정의 메소드 호출
 
-			// 파일에 저장 시 반드시 '예외처리' 해줘야 한다.
 			try {
 				read(name); // 사용자 정의 메소드 호출
 			} catch (Exception ex) {
@@ -87,7 +91,7 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		String fileDir = readOpen.getDirectory();
 		String fileName = readOpen.getFile();
 		String readfilename;
-		readfilename = fileDir + "//" + fileName;  // /특수문자는 앞에 /하나 더 붙여줘야함.
+		readfilename = fileDir + "//" + fileName;  // 특수문자'/'는 앞에 /하나 더 붙여줘야함.
 		return readfilename;
 	}
 	
@@ -119,8 +123,8 @@ public class MemoApplication extends JFrame implements ActionListener {  //Actio
 		String fileDir = saveOpen.getDirectory();
 		String fileName = saveOpen.getFile();
 		String savefilename;
-		savefilename = fileDir + "//" + fileName + ".txt";  // /특수문자는 앞에 /하나 더 붙여줘야함.
-		return savefilename;  // savefilename은 라인 63에 있는 name에 할당한다.
+		savefilename = fileDir + "//" + fileName + ".txt";
+		return savefilename;  // savefilename은 라인 68에 있는 name에 할당한다.
 	}
 	
 	public static void main(String[] args) {
